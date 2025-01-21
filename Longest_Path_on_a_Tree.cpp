@@ -6,20 +6,23 @@ int n;
 int res = 0;
 int cx[N];
 vector<pair<int,int> > a[N];
-int Dfs(int u, int res)
+int d[N];
+void dfs(int u)
 {
     cx[u] = 1;
-    int max_res = res;
-    for (auto s : a[u])
+    for (auto i : a[u])
     {
-        int v = s.first;
-        int w = s.second;
-        if (cx[v] == 0)
-        max_res = max(max_res,Dfs(v,res+w));
+        int v = i.first;
+        int w = i.second;
+        
+        if(!cx[v])
+            {
+                d[v] = d[u] + w;
+                dfs(v);
+            }
     }
-    cx[u] = 0;
-    return max_res;
 }
+
 int main() 
 { 
     #define name "a"
@@ -33,12 +36,19 @@ int main()
         a[u].push_back({v,w});
         a[v].push_back({u,w});
     }
+    dfs(1);
+    int s = 1;
     for (int i = 1; i <= n; i++)
     {
-        int s = Dfs(i,0);
-        //cout << s << endl;
-        res = max(res,s);
+        if (d[i] > d[s])
+            s = i;
     }
-    cout << res << endl;
+    memset(d, 0, sizeof d);
+    memset(cx, 0, sizeof cx);
+    dfs(s);
+    for (int i = 1; i <= n; i++)
+        res = max(res,d[i]);
+    cout << res << "\n";
+    
     return 0;
 }
